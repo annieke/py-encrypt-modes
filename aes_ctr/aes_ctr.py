@@ -45,7 +45,7 @@ if len(outputfile) == 0:
     print 'Error: Name of output file is missing.'
     sys.exit(2)
 
-# encryption
+
 if operation == 'enc': 
     print 'Encrypting...',
 
@@ -64,8 +64,6 @@ if operation == 'enc':
     output_file.write(init_val + enc_buffer)
     output_file.close()
 
-
-# decryption
 else:
     print 'Decrypting...',
 

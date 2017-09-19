@@ -44,6 +44,7 @@ if len(outputfile) == 0:
     print 'Error: Name of output file is missing.'
     sys.exit(2)
 
+
 if operation == 'enc': 
     print 'Encrypting...',
 
