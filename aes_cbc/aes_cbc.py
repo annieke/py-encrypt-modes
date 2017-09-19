@@ -1,6 +1,5 @@
 import sys, getopt
 from Crypto.Cipher import AES
-from Crypto.Util import Counter
 from Crypto import Random
 
 operation = 'enc'
@@ -11,12 +10,12 @@ outputfile = ''
 try:
     opts, args = getopt.getopt(sys.argv[1:],'hedk:i:o:')
 except getopt.GetoptError:
-    print 'Usage: aes_ctr.py [-e|-d] -k <keystring> -i <inputfile> -o <outputfile>'
+    print 'Usage: aes_cbc.py [-e|-d] -k <keystring> -i <inputfile> -o <outputfile>'
     sys.exit(2)
 
 for opt, arg in opts:
     if opt == '-h':
-        print 'Usage: aes_ctr.py [-e|-d] -k <keystring> -i <inputfile> -o <outputfile>'
+        print 'Usage: aes_cbc.py [-e|-d] -k <keystring> -i <inputfile> -o <outputfile>'
         sys.exit()
     elif opt == '-e':
         operation = 'enc'    
@@ -45,34 +44,43 @@ if len(outputfile) == 0:
     print 'Error: Name of output file is missing.'
     sys.exit(2)
 
-# encryption
 if operation == 'enc': 
     print 'Encrypting...',
-	
-    # read the content of the input file into a buffer
 
-    # generate initial counter as a random value
-	
-    # create AES cipher object
-	
-    # encrypt the buffer
-	
-    # write out initial counter and the encrypted buffer to the output file
+    input_file = open(inputfile, 'rb')
+    i_buffer = input_file.read()
+    input_file.close()
 
-	
-# decryption
+    pad_len = AES.block_size - len(i_buffer) % AES.block_size
+    i_buffer += chr(pad_len) * pad_len
+
+    init_val = Random.new().read(AES.block_size)
+    cipher = AES.new(keystring, AES.MODE_CBC, init_val)
+
+    enc_buffer = cipher.encrypt(i_buffer)
+
+    output_file = open(outputfile, 'w')
+    output_file.write(init_val + enc_buffer)
+    output_file.close()
+
 else:
     print 'Decrypting...',
 
-    # read the saved counter and the encrypted payload from the input file
+    input_file = open(inputfile, 'rb')
+    i_buffer = input_file.read()
+    input_file.close()
 
-    # intialize counter with the value read 
-	
-    # create AES cipher object
+    init_val = i_buffer[:AES.block_size]
+    i_buffer = i_buffer[AES.block_size:]
 
-    # decrypt encrypted buffer
-	
-    # write out the decrypted buffer into the output file
+    cipher = AES.new(keystring, AES.MODE_CBC, init_val)
+
+    dec_buffer = cipher.decrypt(i_buffer)
+    dec_buffer = dec_buffer[:len(dec_buffer) - ord(dec_buffer[-1])]
+
+    output_file = open(outputfile, 'w')
+    output_file.write(dec_buffer)
+    output_file.close()
 
 print 'Done.'
 

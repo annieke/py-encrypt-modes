@@ -50,16 +50,15 @@ if operation == 'enc':
     print 'Encrypting...',
 
     input_file = open(inputfile, 'rb')
-    buffer = input_file.read()
+    i_buffer = input_file.read()
     input_file.close()
 
-    # key = keystring.encode('hex')
     init_val = Random.new().read(8)
     ctr = Counter.new(128, initial_value=long(init_val.encode('hex'), 16))
 
     cipher = AES.new(keystring, AES.MODE_CTR, counter=ctr)
 
-    enc_buffer = cipher.encrypt(buffer)
+    enc_buffer = cipher.encrypt(i_buffer)
 
     output_file = open(outputfile, 'w')
     output_file.write(init_val + enc_buffer)
@@ -71,17 +70,16 @@ else:
     print 'Decrypting...',
 
     input_file = open(inputfile, 'rb')
-    buffer = input_file.read()
+    i_buffer = input_file.read()
     input_file.close()
 
-    # key = keystring.encode('hex')
-    init_val = buffer[:8]
-    buffer = buffer[8:]
+    init_val = i_buffer[:8]
+    i_buffer = i_buffer[8:]
     ctr = Counter.new(128, initial_value=long(init_val.encode('hex'), 16))
 
     cipher = AES.new(keystring, AES.MODE_CTR, counter=ctr)
 
-    dec_buffer = cipher.decrypt(buffer)
+    dec_buffer = cipher.decrypt(i_buffer)
 
     output_file = open(outputfile, 'w')
     output_file.write(dec_buffer)
