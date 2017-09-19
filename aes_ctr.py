@@ -48,31 +48,45 @@ if len(outputfile) == 0:
 # encryption
 if operation == 'enc': 
     print 'Encrypting...',
-	
-    # read the content of the input file into a buffer
 
-    # generate initial counter as a random value
-	
-    # create AES cipher object
-	
-    # encrypt the buffer
-	
-    # write out initial counter and the encrypted buffer to the output file
+    input_file = open(inputfile, 'rb')
+    buffer = input_file.read()
+    input_file.close()
 
-	
+    key = keystring.encode('hex')
+    init_val = Random.new().read(8)
+    ctr = Counter.new(128, initial_value=long(init_val.encode('hex'), 16))
+
+    cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
+
+    enc_buffer = cipher.encrypt(buffer)
+
+    output_file = open(outputfile, 'w')
+    output_file.write(init_val + enc_buffer)
+    output_file.close()
+
+
 # decryption
 else:
     print 'Decrypting...',
 
-    # read the saved counter and the encrypted payload from the input file
+    input_file = open(inputfile, 'rb')
+    buffer = input_file.read()
+    input_file.close()
 
-    # intialize counter with the value read 
-	
-    # create AES cipher object
+    key = keystring.encode('hex')
+    init_val = buffer[:8]
+    buffer = buffer[8:]
+    ctr = Counter.new(128, initial_value=long(init_val.encode('hex'), 16))
 
-    # decrypt encrypted buffer
-	
-    # write out the decrypted buffer into the output file
+    cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
+
+    dec_buffer = cipher.decrypt(buffer)
+
+    output_file = open(outputfile, 'w')
+    output_file.write(dec_buffer)
+    output_file.close()
+
 
 print 'Done.'
 
