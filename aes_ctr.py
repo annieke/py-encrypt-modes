@@ -53,11 +53,11 @@ if operation == 'enc':
     buffer = input_file.read()
     input_file.close()
 
-    key = keystring.encode('hex')
+    # key = keystring.encode('hex')
     init_val = Random.new().read(8)
     ctr = Counter.new(128, initial_value=long(init_val.encode('hex'), 16))
 
-    cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
+    cipher = AES.new(keystring, AES.MODE_CTR, counter=ctr)
 
     enc_buffer = cipher.encrypt(buffer)
 
@@ -74,12 +74,12 @@ else:
     buffer = input_file.read()
     input_file.close()
 
-    key = keystring.encode('hex')
+    # key = keystring.encode('hex')
     init_val = buffer[:8]
     buffer = buffer[8:]
     ctr = Counter.new(128, initial_value=long(init_val.encode('hex'), 16))
 
-    cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
+    cipher = AES.new(keystring, AES.MODE_CTR, counter=ctr)
 
     dec_buffer = cipher.decrypt(buffer)
 
